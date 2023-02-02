@@ -1,63 +1,51 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import AdicionarUsuario from '../AdicionarUsuario/AdicionarUsuario'
 import Usuario from '../Usuario/Usuario'
 
-class Usuarios extends Component {
+function Usuarios() {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      usuarios: [
-      ]
-    }
+  const[usuarios, setUsuarios] = useState([]);
 
-    this.adicionarUsuario = this.adicionarUsuario.bind(this)
+  useEffect(() => {
+    fetch('http://localhost:8080/usuarios/findAll')
+      .then(resposta => resposta.json())
+      .then(dados => setUsuarios(dados))
+  }, [])//Essa dependência "[]" é muito importante para não gerar lopping
+        //Desta forma temos o mesmo efeito do ComponentDidMount
+
+  const adicionarUsuario = usuario => {
+    setUsuarios(usuariosAtuais => [...usuariosAtuais, usuario]);
+    //usuariosAtuais representa o estado atual
   }
 
-  adicionarUsuario(usuario) {
-    const usuarios = [...this.state.usuarios, usuario]
-    this.setState({ usuarios: usuarios })
-  }
-
-  removerUsuario(usuario) {
+  const removerUsuario = usuario => {
     if (window.confirm(`Tem certeza que deseja remover "${usuario.nome} ${usuario.sobrenome}"?`)) {
 
-      fetch(`http://localhost:8080/usuarios/deletar/${usuario.id}`,{
+      fetch(`http://localhost:8080/usuarios/deletar/${usuario.id}`, {
         method: 'DELETE'
       })
         .then(resposta => {
-          if(resposta.ok) {
-            let usuarios = this.state.usuarios
-            usuarios = usuarios.filter(x => x.id !== usuario.id)
-            //this.setState({ usuarios: usuarios })
-            //Mesmo efeito acima, modo diferente
-            this.setState({ usuarios })
+          if (resposta.ok) {
+            setUsuarios(usuarios.filter(x => x.id !== usuario.id))
           }
         })
     }
   }
 
-  componentDidMount() {
-    fetch('http://localhost:8080/usuarios/findAll')
-      .then(resposta => resposta.json())
-      .then(dados => this.setState({usuarios: dados}))
-  }
-
-  render() {
     return (
       <>
-        <AdicionarUsuario adicionarUsuario={this.adicionarUsuario} />
+        <AdicionarUsuario adicionarUsuario={adicionarUsuario} />
 
-        {this.state.usuarios.map(usuario => (
+        {usuarios.map(usuario => (
           <Usuario key={usuario.id}
             usuario={usuario}
-            removerUsuario={this.removerUsuario.bind(this, usuario)}
+            removerUsuario={() => removerUsuario(usuario)}
           />
         ))}
       </>
     )
   }
-}
+
 
 export default Usuarios

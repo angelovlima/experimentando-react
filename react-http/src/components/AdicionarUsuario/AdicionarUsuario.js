@@ -1,29 +1,23 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 
 import './AdicionarUsuario.css'
 
-class AdicionarUsuario extends Component {
+function AdicionarUsuario(props) {
 
-  constructor(props) {
-    super(props)
+  const [nome, setNome] = useState('')
+  const [sobrenome, setSobrenome] = useState('')
+  const [email, setEmail] = useState('')
 
-    this.state = { 
-      usuario: { nome: '', sobrenome: '', email: '' } 
-    }
-
-    this.onChangeHandler = this.onChangeHandler.bind(this)
-    this.onSubmitHandler = this.onSubmitHandler.bind(this)
-  }
-
-  onChangeHandler(event) {
-    const { name, value } = event.target
-    this.setState({ usuario: { ...this.state.usuario, [name]: value } })
-  }
-
-  onSubmitHandler(event) {
+  const onSubmitHandler = event => {
     event.preventDefault()
 
-    const usuario = this.state.usuario;
+    const usuario = {
+      nome: nome,
+      sobrenome: sobrenome,
+      email: email
+    }
+    //const usuario = { nome, sobrenome, email}
+    //Da na mesma
 
     fetch('http://localhost:8080/usuarios/cadastrar', {
       method: 'POST',
@@ -32,26 +26,25 @@ class AdicionarUsuario extends Component {
     })
       .then(resposta => resposta.json())
       .then(dados => {
-        this.setState({ usuario: { nome: '', sobrenome: '', email: '' } })
-        this.props.adicionarUsuario(dados)
+        setNome('')
+        setSobrenome('')
+        setEmail('')
+        props.adicionarUsuario(dados)  
       })
-
-
   }
 
-  render() {
     return (
       <div className="AdicionarUsuario">
         <h2>Adicionar Usuário</h2>
-        <form onSubmit={this.onSubmitHandler}>
+        <form onSubmit={onSubmitHandler}>
           <div className="Linha">
             <div className="Coluna">
               <label>Nome</label>
               <input
                 type="text"
                 name="nome"
-                value={this.state.usuario.nome}
-                onChange={this.onChangeHandler}
+                value={nome}
+                onChange={event => setNome(event.target.value)}
                 required>
               </input>
             </div>
@@ -60,8 +53,8 @@ class AdicionarUsuario extends Component {
               <input
                 type="text"
                 name="sobrenome"
-                value={this.state.usuario.sobrenome}
-                onChange={this.onChangeHandler}
+                value={sobrenome}
+                onChange={event => setSobrenome(event.target.value)}
                 required>
               </input>
             </div>
@@ -72,8 +65,8 @@ class AdicionarUsuario extends Component {
               <input
                 type="email"
                 name="email"
-                value={this.state.usuario.email}
-                onChange={this.onChangeHandler}
+                value={email}
+                onChange={event => setEmail(event.target.value)}
                 required>
               </input>
             </div>
@@ -84,7 +77,6 @@ class AdicionarUsuario extends Component {
         </form>
       </div>
     )
-  }
 }
 
 export default AdicionarUsuario
