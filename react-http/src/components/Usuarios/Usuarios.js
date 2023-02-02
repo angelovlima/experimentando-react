@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 
-import AdicionarUsuario from '../AdicionarUsuario/AdicionarUsuario'
 import Usuario from '../Usuario/Usuario'
 
 function Usuarios() {
@@ -13,11 +12,6 @@ function Usuarios() {
       .then(dados => setUsuarios(dados))
   }, [])//Essa dependência "[]" é muito importante para não gerar lopping
         //Desta forma temos o mesmo efeito do ComponentDidMount
-
-  const adicionarUsuario = usuario => {
-    setUsuarios(usuariosAtuais => [...usuariosAtuais, usuario]);
-    //usuariosAtuais representa o estado atual
-  }
 
   const removerUsuario = usuario => {
     if (window.confirm(`Tem certeza que deseja remover "${usuario.nome} ${usuario.sobrenome}"?`)) {
@@ -35,8 +29,6 @@ function Usuarios() {
 
     return (
       <>
-        <AdicionarUsuario adicionarUsuario={adicionarUsuario} />
-
         {usuarios.map(usuario => (
           <Usuario key={usuario.id}
             usuario={usuario}
