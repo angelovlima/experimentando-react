@@ -6,6 +6,7 @@ import Usuarios from './components/Usuarios/Usuarios'
 import AdicionarUsuario from './components/AdicionarUsuario/AdicionarUsuario';
 import Home from './components/Home/Home';
 import PaginaNaoEncontrada from './components/PaginaNaoEncontrada/PaginaNaoEncontrada';
+import DetalhesUsuario from './components/DetalhesUsuario/DetalhesUsuario';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />}/>
             <Route path="/usuarios" element={<Usuarios />}/>
+            <Route path="/usuarios/:id" element={<DetalhesUsuario/>}/>
             <Route path="/cadastro" element={<AdicionarUsuario />}/>
             <Route path="*" element={<PaginaNaoEncontrada />}/>
           </Routes>
